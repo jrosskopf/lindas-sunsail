@@ -20,6 +20,15 @@ Featuring high-precision scale calibration, interactive drag-handles for sails, 
 Interactive Three.js environment showing saddle mesh curvature, guide posts with floating height meters, a glowing sun sphere sweep, and accurate high-contrast structural ground shadows.
 ![Linda's Sunsail 3D Simulation View](screenshots/sunsail-3d-scene.png)
 
+### 🎬 Real-time Solar Shadow Animations
+Watch **Linda's Sunsail** Astronomical Sun & Shadow Engine dynamically scrub through hours from **08:00 AM to 06:00 PM** (standard Munich coordinates), showing exact real-time shadow movements:
+
+#### A. Unified Dual Workspace Time Lapse
+![Linda's Sunsail Simulation Workspace](screenshots/sunsail-simulation-workspace.gif)
+
+#### B. Focused 3D Shadow Sweep
+![Linda's Sunsail 3D Scene Shadow Sweep](screenshots/sunsail-simulation-3d.gif)
+
 ---
 
 ## ✨ Outstanding Core Features
