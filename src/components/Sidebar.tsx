@@ -497,6 +497,102 @@ export default function Sidebar() {
               <option value="A-C">Hinged Roller Axis A → C (Split Quad)</option>
             </select>
           </div>
+
+          {/* Dynamic 3D Dimensions & Area Report */}
+          {(() => {
+            // Helper to get 3D length
+            const get3DLength = (id1: string, id2: string) => {
+              const a1 = anchors.find(a => a.id === id1);
+              const a2 = anchors.find(a => a.id === id2);
+              if (!a1 || !a2) return 0;
+              const dx = a2.pos2d.x - a1.pos2d.x;
+              const dy = a2.pos2d.y - a1.pos2d.y;
+              const dz = a2.z - a1.z;
+              return Math.sqrt(dx * dx + dy * dy + dz * dz);
+            };
+
+            // Calculate boundary edge lengths
+            const edgesList: { label: string; length: number }[] = [];
+            const n = sail.anchorIds.length;
+            for (let i = 0; i < n; i++) {
+              const id1 = sail.anchorIds[i];
+              const id2 = sail.anchorIds[(i + 1) % n];
+              const a1 = anchors.find(a => a.id === id1);
+              const a2 = anchors.find(a => a.id === id2);
+              if (a1 && a2) {
+                edgesList.push({
+                  label: `${a1.label}➔${a2.label}`,
+                  length: get3DLength(id1, id2)
+                });
+              }
+            }
+
+            // Calculate diagonals if quad
+            const diagonalsList: { label: string; length: number }[] = [];
+            if (n === 4) {
+              const d1_1 = sail.anchorIds[0];
+              const d1_2 = sail.anchorIds[2];
+              const d2_1 = sail.anchorIds[1];
+              const d2_2 = sail.anchorIds[3];
+              const a1 = anchors.find(a => a.id === d1_1);
+              const a2 = anchors.find(a => a.id === d1_2);
+              const b1 = anchors.find(a => a.id === d2_1);
+              const b2 = anchors.find(a => a.id === d2_2);
+              if (a1 && a2) diagonalsList.push({ label: `${a1.label}➔${a2.label}`, length: get3DLength(d1_1, d1_2) });
+              if (b1 && b2) diagonalsList.push({ label: `${b1.label}➔${b2.label}`, length: get3DLength(d2_1, d2_2) });
+            }
+
+            // Calculate Total 3D surface area using Heron's formula on triangulated mesh
+            let totalArea3D = 0;
+            const triplets = triangulateSail(sail, anchors);
+            triplets.forEach(tri => {
+              const a = get3DLength(tri[0], tri[1]);
+              const b = get3DLength(tri[1], tri[2]);
+              const c = get3DLength(tri[2], tri[0]);
+              const s = (a + b + c) / 2;
+              const term = s * (s - a) * (s - b) * (s - c);
+              if (term > 0) {
+                totalArea3D += Math.sqrt(term);
+              }
+            });
+
+            return (
+              <div className="form-group border-t border-slate-900 pt-3 mt-3">
+                <label className="form-label mb-2 block text-indigo-200">3D Sail Dimensions & Area</label>
+                
+                {/* 3D Edge Table */}
+                <div className="glass-panel p-2.5 rounded text-[11px] space-y-1 bg-slate-950/40 border border-slate-800">
+                  <div className="flex justify-between border-b border-slate-800 pb-1 mb-1 font-bold text-slate-400">
+                    <span>Segment / Axis</span>
+                    <span>Length (cm)</span>
+                    <span>Length (m)</span>
+                  </div>
+                  {edgesList.map(edge => (
+                    <div key={edge.label} className="flex justify-between text-slate-200">
+                      <span className="font-mono">{edge.label} (Edge)</span>
+                      <span className="font-mono">{(edge.length * 100).toFixed(0)} cm</span>
+                      <span className="font-mono">{edge.length.toFixed(2)} m</span>
+                    </div>
+                  ))}
+                  {diagonalsList.map(diag => (
+                    <div key={diag.label} className="flex justify-between text-indigo-300">
+                      <span className="font-mono">{diag.label} (Axis)</span>
+                      <span className="font-mono">{(diag.length * 100).toFixed(0)} cm</span>
+                      <span className="font-mono">{diag.length.toFixed(2)} m</span>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Total Area Highlight */}
+                <div className="mt-2.5 p-2 rounded bg-indigo-950/50 border border-indigo-500/30 flex justify-between items-center">
+                  <span className="text-[11px] font-bold text-indigo-200">3D Surface Area:</span>
+                  <span className="text-sm font-extrabold text-indigo-400 font-mono">
+                    {totalArea3D.toFixed(2)} m²
+                  </span>
+                </div>
+              </div>
+            );
+          })()}
         </div>
       )}
 
