@@ -2,6 +2,8 @@
 
 A premium, desktop-first, highly aesthetic local Shade Sail Planning Tool and high-precision Astronomical Simulation Engine. Built in **React + TypeScript + Three.js (R3F)**, **Linda's Sunsail** enables residential planners and homeowners to upload blueprint floor plans, draft custom shade sail structures, optimize post heights, and run real-time solar shadow animations for any site coordinates, date, and hour.
 
+🌐 **[Try the Live Interactive Simulator on GitHub Pages!](https://jrosskopf.github.io/lindas-sunsail/)**
+
 ---
 
 ## 📸 Interactive Workspace Screenshots
